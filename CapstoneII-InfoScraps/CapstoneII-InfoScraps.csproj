@@ -7,16 +7,4 @@
     <RootNamespace>CapstoneII_InfoScraps</RootNamespace>
   </PropertyGroup>
 
-  <ItemGroup>
-    <Folder Include="Controllers\Dashboard\" />
-    <Folder Include="Controllers\EmailTemplates\" />
-    <Folder Include="Controllers\Scraper\" />
-    <Folder Include="Controllers\Settings\" />
-    <Folder Include="Views\Dashboard\" />
-    <Folder Include="Views\EmailTemplates\" />
-    <Folder Include="Views\Scraper\" />
-    <Folder Include="Views\Settings\" />
-    <Folder Include="Views\Registration\" />
-  </ItemGroup>
-
 </Project>
