@@ -1,0 +1,137 @@
+1. The Quick Check
+Subject options
+Quick question, {{business_name}}
+{{business_name}} quick question
+
+Hi {{first_name}},
+
+Quick question. Who usually handles {{specific_problem}} at {{business_name}}?
+
+I noticed {{personalized_observation}} and thought I would reach out.
+
+If this is not you, no worries at all.
+
+Thanks,  
+{{sender_name}}
+
+
+—----------------------------------------—----------------------------------------—--------------------------------------
+
+2. The Gentle Idea
+Subject options
+One idea for {{business_name}}
+Small idea for {{business_name}}
+
+Hi {{first_name}},
+I came across {{business_name}} while looking at {{industry_or_location}} businesses and noticed {{specific_problem}}.
+We have seen a simple fix help with this before, so I thought it might be worth sharing.
+Happy to explain if you are interested.
+Best,
+{{sender_name}}
+
+—----------------------------------------—----------------------------------------—--------------------------------------
+
+3. The Pattern Spotter
+Subject options
+Seeing this across {{industry}} businesses
+Quick observation from {{industry}}
+
+Hi {{first_name}},
+I have been looking at a number of {{industry}} businesses recently and noticed a common pattern around {{specific_problem}}.
+When I checked {{business_name}}, it looked like there could be an opportunity there too.
+Let me know if you would like more context.
+Regards,
+{{sender_name}}
+
+—----------------------------------------—----------------------------------------—--------------------------------------
+
+4. The Social Proof Lite
+Subject options
+Something that worked for a similar business
+Result we saw in {{industry}}
+
+Hi {{first_name}},
+We recently helped a business similar to {{business_name}} and saw {{specific_result}}.
+When I looked at your setup, it reminded me of where they started.
+If you want, I can share what made the difference.
+Best,
+{{sender_name}}
+—----------------------------------------—----------------------------------------—--------------------------------------
+
+5. The Ultra Short Ask
+Subject options
+Open to a quick idea
+Worth a quick look
+
+Hi {{first_name}},
+Would you be open to a quick idea that has helped other {{industry}} businesses?
+Totally fine if not.
+Thanks,
+{{sender_name}}
+
+—----------------------------------------—----------------------------------------—--------------------------------------
+6. The Direct Owner Note
+Subject options
+Question about {{business_name}}
+Quick note for {{business_name}}
+
+Hi {{first_name}},
+I will keep this short.
+I work with {{industry}} businesses on {{specific_outcome}} and noticed something interesting at {{business_name}}.
+If it is relevant, I am happy to explain.
+Best,
+{{sender_name}}
+—----------------------------------------—----------------------------------------—--------------------------------------
+7. The Curious Observation
+Subject options
+Noticed this at {{business_name}}
+Quick observation
+
+Hi {{first_name}},
+While looking at {{business_name}}, I noticed {{personalized_observation}}.
+It caught my attention because it often connects to {{specific_problem}} for similar businesses.
+Let me know if you want me to elaborate.
+Regards,
+{{sender_name}}
+—----------------------------------------—----------------------------------------—--------------------------------------
+
+8. The Low Commitment Share
+Subject options
+Happy to share an idea
+Sharing something useful
+Hi {{first_name}},
+I had an idea that could help with {{specific_problem}} at {{business_name}}.
+No pitch attached. Just something we have seen work well before.
+If you want to hear it, let me know.
+Thanks,
+{{sender_name}}
+—----------------------------------------—----------------------------------------—--------------------------------------
+
+9. The Timing Check
+Subject options
+Is now a bad time
+Quick timing check
+Hi {{first_name}},
+Just wanted to check if now is a bad time to share an idea related to {{specific_problem}} at {{business_name}}.
+If it is, I am happy to circle back later.
+Best,
+{{sender_name}}
+
+—----------------------------------------—----------------------------------------—--------------------------------------
+
+Hi {{first_name}},
+Just wanted to check if now is a bad time to share an idea related to {{specific_problem}} at {{business_name}}.
+If it is, I am happy to circle back later.
+Best,
+{{sender_name}}
+—----------------------------------------—----------------------------------------—--------------------------------------
+10. The Straightforward Intro
+Subject options
+Quick intro
+Introduction and question
+Hi {{first_name}},
+Quick introduction. I work with {{industry}} businesses and focus on {{specific_outcome}}.
+I came across {{business_name}} and thought there could be a relevant opportunity.
+Open to a short conversation if it makes sense.
+Regards,
+{{sender_name}}
