@@ -12,4 +12,8 @@
     <PackageReference Include="Npgsql.EntityFrameworkCore.PostgreSQL" Version="9.0.0-rc.2" />
   </ItemGroup>
 
+  <ItemGroup>
+    <Folder Include="Models\DB\" />
+  </ItemGroup>
+
 </Project>
