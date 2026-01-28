@@ -1,10 +1,9 @@
 namespace CapstoneII_InfoScraps.Models.DB;
 
-public class Users
+public class EmailTemplates
 {
     // pk id
     // fk accountid
-    // username
-    // email address
-    // phone number
+    // template data
+    // template variables
 }
