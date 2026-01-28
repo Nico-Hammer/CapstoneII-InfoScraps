@@ -9,7 +9,7 @@ public class ScrapedData
    public int Id { get; set; }
    // fk accountid
    public int AccountId { get; set; }
-   public Accounts Account { get; set; } = null!;
+   public Account Account { get; set; } = null!;
    // scraped name
    public string? Scraped_Name { get; set; }
    // scraped email

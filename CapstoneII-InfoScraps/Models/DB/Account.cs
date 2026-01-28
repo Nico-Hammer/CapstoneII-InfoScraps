@@ -2,7 +2,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CapstoneII_InfoScraps.Models.DB;
 
-public class Accounts
+public class Account
 {
     // pk id
     [Required]
@@ -10,7 +10,7 @@ public class Accounts
     // fk user
     public ICollection<Users> Users { get; set; }
     // fk email templates
-    public ICollection<EmailTemplates> Email_Templates { get; set; }
+    public ICollection<EmailTemplate> Email_Templates { get; set; }
     // fk scraped data
     public ICollection<ScrapedData> Scraped_Data { get; set; }
 }

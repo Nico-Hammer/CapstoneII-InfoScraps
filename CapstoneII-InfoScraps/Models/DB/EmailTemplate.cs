@@ -3,7 +3,7 @@ using System.ComponentModel.DataAnnotations;
 
 namespace CapstoneII_InfoScraps.Models.DB;
 
-public class EmailTemplates
+public class EmailTemplate
 {
     // pk id
     [Required]
@@ -11,7 +11,7 @@ public class EmailTemplates
     // fk accountid
     public int AccountId { get; set; }
 
-    public Accounts Account { get; set; } = null!;
+    public Account Account { get; set; } = null!;
     // template data
     public List<string>? Template_Data {get; set;}
     // template variables

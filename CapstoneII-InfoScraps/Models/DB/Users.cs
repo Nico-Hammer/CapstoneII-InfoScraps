@@ -10,7 +10,7 @@ public class Users
     public int Id { get; set; }
     // fk accountid
     public int AccountId { get; set; }
-    public Accounts Account { get; set; } = null!;
+    public Account Account { get; set; } = null!;
     // username
     [Required]
     public string Username { get; set; }
