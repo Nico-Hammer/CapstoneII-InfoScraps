@@ -1,19 +1,16 @@
-﻿using Microsoft.AspNetCore.Mvc;
-using CapstoneII_InfoScraps.Models.ViewModels;
-using System.Text.RegularExpressions;
+﻿using CapstoneII_InfoScraps.Models.ViewModels;
+using Microsoft.AspNetCore.Mvc;
 
 namespace CapstoneII_InfoScraps.Controllers.Scraper
 {
     public class ScraperController : Controller
     {
+        private const string URLRegexPattern = @"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+?$";
+        
         [HttpGet]
         public IActionResult Index()
         {
-            var model = new ScraperViewModel
-            {
-                EmailRegex = @"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}"
-            };
-            return View(model);
+            return View(new ScraperViewModel());
         }
 
         [HttpPost]
@@ -25,20 +22,13 @@ namespace CapstoneII_InfoScraps.Controllers.Scraper
                 return View(model);
             }
 
-            // Make sure the regex is valid
-            try
+            if(!System.Text.RegularExpressions.Regex.IsMatch(model.WebsiteUrl, URLRegexPattern))
             {
-                _ = new Regex(model.EmailRegex);
-            }
-            catch (ArgumentException)
-            {
-                ModelState.AddModelError(
-                    nameof(model.EmailRegex),
-                    "Email regex is not valid."
-                    );
+                ModelState.AddModelError(nameof(model.WebsiteUrl),"Website URL format is not supported");
 
                 return View(model);
             }
+
 
             return View(model);
         }
