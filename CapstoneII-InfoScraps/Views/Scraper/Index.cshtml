@@ -1,5 +1,23 @@
-﻿@{
+﻿@model CapstoneII_InfoScraps.Models.ViewModels.ScraperViewModel
+
+@{
     ViewData["Title"] = "Scraper";
 }
 
 <h1>Scraper Page</h1>
+
+<form asp-action="Index" method="post">
+    <div>
+        <label asp-for="WebsiteUrl"></label>
+        <input asp-for="WebsiteUrl" />
+        <span asp-validation-for="WebsiteUrl"></span>
+    </div>
+
+    <div>
+        <label asp-for="EmailRegex"></label>
+        <input asp-for="EmailRegex" />
+        <span asp-validation-for="EmailRegex"></span>
+    </div>
+
+    <button type="submit">Start Scrape</button>
+</form>
