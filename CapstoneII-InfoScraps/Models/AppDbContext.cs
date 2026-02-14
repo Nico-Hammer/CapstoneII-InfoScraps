@@ -6,7 +6,7 @@ public class AppDbContext : DbContext
     public AppDbContext(DbContextOptions<AppDbContext> options) : base(options) { }
 
     public DbSet<Account> Accounts { get; set; }
-    public DbSet<Users> Users { get; set; }
+    public DbSet<User> Users { get; set; }
     public DbSet<EmailTemplate> EmailTemplates { get; set; }
     public DbSet<ScrapedData> ScrapedData { get; set; }
 
@@ -14,10 +14,10 @@ public class AppDbContext : DbContext
     {
         base.OnModelCreating(modelBuilder);
 
-        modelBuilder.Entity<Users>()
+        modelBuilder.Entity<User>()
             .HasOne(u => u.Account)
             .WithOne(a => a.User)
-            .HasForeignKey<Users>(u => u.AccountId)
+            .HasForeignKey<User>(u => u.AccountId)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<EmailTemplate>()

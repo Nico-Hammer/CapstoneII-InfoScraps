@@ -3,7 +3,7 @@ using System.Runtime.InteropServices;
 
 namespace CapstoneII_InfoScraps.Models.DB;
 
-public class Users
+public class User
 {
     // pk id
     [Required]
