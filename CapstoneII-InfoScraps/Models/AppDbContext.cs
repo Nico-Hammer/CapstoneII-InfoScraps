@@ -16,8 +16,8 @@ public class AppDbContext : DbContext
 
         modelBuilder.Entity<Users>()
             .HasOne(u => u.Account)
-            .WithMany(a => a.Users)
-            .HasForeignKey(u => u.AccountId)
+            .WithOne(a => a.User)
+            .HasForeignKey<Users>(u => u.AccountId)
             .OnDelete(DeleteBehavior.Cascade);
 
         modelBuilder.Entity<EmailTemplate>()
