@@ -1,4 +1,5 @@
 ﻿using CapstoneII_InfoScraps.Models.DB;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
 namespace CapstoneII_InfoScraps.Controllers.Account
@@ -23,6 +24,8 @@ namespace CapstoneII_InfoScraps.Controllers.Account
         {
             if (ModelState.IsValid)
             {
+                var hasher = new PasswordHasher<User>();
+                user.Password = hasher.HashPassword(user, user.Password);
                 var account = new Models.DB.Account();
                 account.Email_Templates = new List<EmailTemplate>();
                 account.Scraped_Data = new List<ScrapedData>();
