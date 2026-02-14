@@ -8,7 +8,7 @@ public class User
     public int Id { get; set; }
     // fk accountid
     public int AccountId { get; set; }
-    public Account Account { get; set; } = null!;
+    public Account? Account { get; set; }
     // username
     [Required(ErrorMessage = "Enter a username")]
     public string Username { get; set; } = null!;
@@ -25,7 +25,7 @@ public class User
     // regex from https://full-time.learnhowtoprogram.com/c-and-net/authentication-with-identity/authentication-with-identity-user-registration-viewmodel-validation-and-views
     [Required(ErrorMessage = "Enter a password")]
     [DataType(DataType.Password)]
-    [RegularExpression("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&])[A-Za-z\\d@$!%*?&]{8,}$",
+    [RegularExpression("^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)(?=.*[@$!%*?&#])[A-Za-z\\d@$!%*?&]{8,}$",
         ErrorMessage =
             "Your password must contain at least 8 characters, a capital letter, a lowercase letter, a number, and a special character.")]
     public string Password { get; set; } = null!;

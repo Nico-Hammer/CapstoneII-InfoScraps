@@ -23,12 +23,18 @@ namespace CapstoneII_InfoScraps.Controllers.Account
         {
             if (ModelState.IsValid)
             {
-                _context.Users.Add(user);
+                var account = new Models.DB.Account();
+                account.Email_Templates = new List<EmailTemplate>();
+                account.Scraped_Data = new List<ScrapedData>();
+                account.User = user;
+                _context.Accounts.Add(account);
                 _context.SaveChanges();
                 return RedirectToAction("Index");
             }
 
-            return View(user);
+            var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
+            Console.WriteLine(string.Join(", ", errors));
+            return View("Index",user);
         }
     }
 }
