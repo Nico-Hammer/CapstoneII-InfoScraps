@@ -5,6 +5,7 @@
 @if (ViewData["Username"] != null)
 {
     <p>Hello, @ViewData["Username"] (Email: @ViewData["Email"] Phone: @ViewData["PhoneNumber"])</p>
+    <a class="nav-link text-dark btn btn-danger" style="margin: auto auto;width: 20%" asp-controller="Dashboard" asp-action="Logout">Log out</a>
 }
 else
 {

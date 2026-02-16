@@ -32,7 +32,7 @@ namespace CapstoneII_InfoScraps.Controllers.Account
                 account.User = user;
                 _context.Accounts.Add(account);
                 _context.SaveChanges();
-                return RedirectToAction("Index");
+                return RedirectToAction("Index","Login");
             }
 
             var errors = ModelState.Values.SelectMany(v => v.Errors).Select(e => e.ErrorMessage);
