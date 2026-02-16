@@ -5,7 +5,6 @@ namespace CapstoneII_InfoScraps.Models.DB;
 public class ScrapedData
 {
    // pk id
-   [Required]
    public int Id { get; set; }
    // fk accountid
    public int AccountId { get; set; }
@@ -20,6 +19,5 @@ public class ScrapedData
    [Required]
    public DateTime Date_Of_Scrape { get; set; }
    // website scraped from
-   [Required]
-   public string Website { get; set; }
+   [Required] public string Website { get; set; } = null!;
 }

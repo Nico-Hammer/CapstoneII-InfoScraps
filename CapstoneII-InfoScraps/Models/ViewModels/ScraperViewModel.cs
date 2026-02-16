@@ -6,7 +6,7 @@ namespace CapstoneII_InfoScraps.Models.ViewModels
     {
         [Required(ErrorMessage = "Website URL is required")]
         [Url(ErrorMessage = "Please enter a valid website URL")]
-        public string WebsiteUrl { get; set; }
+        public string WebsiteUrl { get; set; } = null!;
 
     }
 }
