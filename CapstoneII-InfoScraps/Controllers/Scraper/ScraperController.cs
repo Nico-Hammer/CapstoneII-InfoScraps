@@ -1,8 +1,6 @@
 ﻿using CapstoneII_InfoScraps.Models.ViewModels;
+using CapstoneII_InfoScraps.Services;
 using Microsoft.AspNetCore.Mvc;
-using System.Net.Http;
-using System.Net.Http.Json;
-using System.Threading.Tasks;
 using System.Text.RegularExpressions;
 using System.Linq;
 
@@ -10,61 +8,76 @@ namespace CapstoneII_InfoScraps.Controllers.Scraper
 {
     public class ScraperController : Controller
     {
-        private const string URLRegexPattern = @"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+?$";
+        private readonly ScraperService _scraperService;
 
-        // URL of the Python based scraper API
-        private const string ScraperAPIURL = "https://localhost:"; // Fill the rest in once we know what the endpoint will be
+        // Regex pattern to validate website URLs
+        private const string URLRegexPattern =
+            @"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+?$";
+
+        public ScraperController(ScraperService scraperService)
+        {
+            // Inject the scraper service
+            _scraperService = scraperService;
+        }
 
         [HttpGet]
         public IActionResult Index()
         {
+            // Return an empty view model when page first loads
             return View(new ScraperViewModel());
         }
 
         [HttpPost]
-        public async Task<IActionResult> Index(ScraperViewModel model)
+        public IActionResult Index(ScraperViewModel model)
         {
-            // Check required fields and URL format
+            // Check if the model is valid
             if (!ModelState.IsValid)
+                return View(model);
+
+            // Validate the website URL format
+            if (!Regex.IsMatch(model.WebsiteUrl, URLRegexPattern))
             {
+                ModelState.AddModelError(nameof(model.WebsiteUrl),
+                    "Website URL format is not supported");
                 return View(model);
             }
-
-            if(!System.Text.RegularExpressions.Regex.IsMatch(model.WebsiteUrl, URLRegexPattern))
-            {
-                ModelState.AddModelError(nameof(model.WebsiteUrl),"Website URL format is not supported");
-
-                return View(model);
-            }
-
-            // Create an HTTP client to talk to the Python scraper API
-            using var client = new HttpClient();
 
             try
             {
-                // Send the validated URL to the scraper API
-                var response = await client.PostAsJsonAsync(ScraperAPIURL, new { url = model.WebsiteUrl });
+                // Call the Selenium scraper service
+                var resultList = _scraperService.Scrape(model.WebsiteUrl);
 
-                // Fail if the API returns an error status
-                response.EnsureSuccessStatusCode();
-
-                // Read scraped data returned by the API
-                var results = await response.Content.ReadFromJsonAsync<ScraperViewModel>();
-
-                // Safely copy scraped results into the view model
-                model.Emails = results?.Emails ?? new List<string>();
-                model.Names = results?.Names ?? new List<string>();
-
-                // Show a message if nothing was found
-                if (!model.Emails.Any() && !model.Names.Any())
+                if (resultList.Any())
                 {
-                    model.ErrorMessage = "No contact information was found on this website.";
+                    var result = resultList.First();
+
+                    // Populate emails and phone numbers
+                    model.Emails = result.Emails ?? new List<string>();
+                    model.PhoneNumbers = result.PhoneNumbers ?? new List<string>();
+
+                    // Populate names (optional)
+                    model.Names = result.Names ?? new List<string>();
+
+                    // Set error message if nothing was found
+                    if (!model.Emails.Any() && !model.PhoneNumbers.Any())
+                    {
+                        model.ErrorMessage = "No emails or phone numbers were found on this website.";
+                    }
+                    else
+                    {
+                        // Set success message if scraping found results
+                        model.SuccessMessage = $"Scraping completed for {model.WebsiteUrl}.";
+                    }
+                }
+                else
+                {
+                    model.ErrorMessage = "No data was returned from the scraper.";
                 }
             }
             catch
             {
-                // Handle API or network failures
-                model.ErrorMessage = "Unable to connect to the scraping service. Please try again later.";
+                // Error message if scraping fails
+                model.ErrorMessage = "An error occurred while scraping the website.";
             }
 
             return View(model);
