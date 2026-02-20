@@ -1,5 +1,15 @@
 ﻿@{
     ViewData["Title"] = "Dashboard";
 }
-
 <h1>Dashboard Page</h1>
+@if (ViewData["Username"] != null)
+{
+    <p>Hello, @ViewData["Username"] (Email: @ViewData["Email"] Phone: @ViewData["PhoneNumber"])</p>
+    <a class="nav-link text-dark btn btn-danger" style="margin: auto auto;width: 20%" asp-controller="Dashboard" asp-action="Logout">Log out</a>
+}
+else
+{
+    <p style="margin: auto auto">You are not logged in.</p>
+    <br/>
+    <a class="nav-link text-dark btn btn-primary" style="margin: auto auto;width: 20%" asp-controller="Login" asp-action="Index">Login</a>
+}
