@@ -1,3 +1,4 @@
+using CapstoneII_InfoScraps.Services;
 using Microsoft.EntityFrameworkCore;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -8,6 +9,9 @@ builder.Services.AddControllersWithViews();
 // add database to program with dependency injection
 builder.Services.AddDbContext<AppDbContext>(options => 
     options.UseNpgsql(builder.Configuration.GetConnectionString("DefaultConnection")));
+
+// Add scraper service for handling website scraping logic
+builder.Services.AddScoped<ScraperService>();
 
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession(options =>
