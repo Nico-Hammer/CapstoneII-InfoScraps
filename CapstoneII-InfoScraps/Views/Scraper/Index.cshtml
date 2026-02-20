@@ -22,19 +22,18 @@
 
 <hr />
 
-<!-- Show success message if scraping succeeded -->
+<!-- Show success, error, or results -->
 @if (!string.IsNullOrEmpty(Model.SuccessMessage))
 {
     <p style="color:green;"><strong>@Model.SuccessMessage</strong></p>
 }
 
-<!-- Show error message if something went wrong -->
 @if (!string.IsNullOrEmpty(Model.ErrorMessage))
 {
     <p style="color:red;"><strong>@Model.ErrorMessage</strong></p>
 }
-<!-- Show results if there is any scraped data -->
-else if (Model.Emails.Any() || Model.PhoneNumbers.Any() || Model.Names.Any())
+
+@if (Model.Emails.Any() || Model.PhoneNumbers.Any() || Model.Names.Any())
 {
     <h3>Scraping Results</h3>
 
