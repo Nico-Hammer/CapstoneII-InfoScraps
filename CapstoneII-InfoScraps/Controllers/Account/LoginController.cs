@@ -40,16 +40,7 @@ namespace CapstoneII_InfoScraps.Controllers.Account
                 ViewData["ErrorMessage"] = "Invalid username or password";
                 return View("Index",model);
             }
-            HttpContext.Session.SetString("Username",user.Username);
-            HttpContext.Session.SetString("Email",user.Email);
-            if (user.Phone_Number != null)
-            {
-                HttpContext.Session.SetString("PhoneNumber", user.Phone_Number);
-            }
-            else
-            {
-                HttpContext.Session.SetString("PhoneNumber", "None provided");
-            }
+            HttpContext.Session.SetInt32("UserID",user.Id);
 
             return RedirectToAction("Index", "Dashboard");
         }

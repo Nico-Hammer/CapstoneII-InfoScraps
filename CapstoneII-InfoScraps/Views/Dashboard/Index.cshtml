@@ -1,15 +1,35 @@
-﻿@{
+﻿@model List<CapstoneII_InfoScraps.Models.DB.Account>
+@{
     ViewData["Title"] = "Dashboard";
 }
+
 <h1>Dashboard Page</h1>
-@if (ViewData["Username"] != null)
-{
-    <p>Hello, @ViewData["Username"] (Email: @ViewData["Email"] Phone: @ViewData["PhoneNumber"])</p>
+@if(Model != null && Model.Any()){
+    @foreach (var account in Model)
+    {
+        <h2>Account ID: @account.Id</h2>
+        <p>Username: @account.User.Username</p>
+        <p>Email: @account.User.Email</p>
+        @if(account.User.Phone_Number == null)
+        {
+            <p>Phone: None provided</p>
+        }
+        else
+        {
+            <p>Phone: @account.User.Phone_Number</p>
+        }
+        <p>Number of email templates: @account.Email_Templates.Count</p>
+        <p>Number of scrapes: @account.Scraped_Data.Count</p>
+
+    }    
+    <a class="nav-link text-dark btn btn-primary" style="margin: auto auto;width: 20%" asp-controller="Scraper" asp-action="Index">Scrape</a>
+    <br>
+    <a class="nav-link text-dark btn btn-primary" style="margin: auto auto;width: 20%" asp-controller="EmailTemplates" asp-action="Index">Email templates</a>
+    <br>
     <a class="nav-link text-dark btn btn-danger" style="margin: auto auto;width: 20%" asp-controller="Dashboard" asp-action="Logout">Log out</a>
 }
 else
 {
-    <p style="margin: auto auto">You are not logged in.</p>
-    <br/>
-    <a class="nav-link text-dark btn btn-primary" style="margin: auto auto;width: 20%" asp-controller="Login" asp-action="Index">Login</a>
+    <h2>You are not logged in</h2>
+    <a class="nav-link text-dark btn btn-primary" style="margin: auto auto;width: 20%" asp-controller="Login" asp-action="Index">Log in</a>
 }
