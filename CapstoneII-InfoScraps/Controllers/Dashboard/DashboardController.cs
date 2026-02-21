@@ -27,6 +27,10 @@ namespace CapstoneII_InfoScraps.Controllers.Dashboard
                 .Include(a => a.Scraped_Data)
                 .ToList();
 
+            if (account.Any())
+            {
+                HttpContext.Session.SetInt32("AccountID",account.First().Id);
+            }
             return View(account);
         }
 

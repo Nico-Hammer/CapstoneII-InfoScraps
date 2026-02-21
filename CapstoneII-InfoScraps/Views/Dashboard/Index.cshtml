@@ -7,20 +7,20 @@
 @if(Model != null && Model.Any()){
     @foreach (var account in Model)
     {
+        var user = account.User;
         <h2>Account ID: @account.Id</h2>
-        <p>Username: @account.User.Username</p>
-        <p>Email: @account.User.Email</p>
-        @if(account.User.Phone_Number == null)
+        <p>Username: @user.Username</p>
+        <p>Email: @user.Email</p>
+        @if(user.Phone_Number == null)
         {
             <p>Phone: None provided</p>
         }
         else
         {
-            <p>Phone: @account.User.Phone_Number</p>
+            <p>Phone: @user.Phone_Number</p>
         }
         <p>Number of email templates: @account.Email_Templates.Count</p>
         <p>Number of scrapes: @account.Scraped_Data.Count</p>
-
     }    
     <a class="nav-link text-dark btn btn-primary" style="margin: auto auto;width: 20%" asp-controller="Scraper" asp-action="Index">Scrape</a>
     <br>
