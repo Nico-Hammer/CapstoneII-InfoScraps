@@ -3,21 +3,24 @@ using CapstoneII_InfoScraps.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
 using System.Linq;
+using CapstoneII_InfoScraps.Models.DB;
 
 namespace CapstoneII_InfoScraps.Controllers.Scraper
 {
     public class ScraperController : Controller
     {
         private readonly ScraperService _scraperService;
-
+        private readonly AppDbContext _context;
+        
         // Regex pattern to validate website URLs
         private const string URLRegexPattern =
             @"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+?$";
 
-        public ScraperController(ScraperService scraperService)
+        public ScraperController(ScraperService scraperService,AppDbContext context)
         {
             // Inject the scraper service
             _scraperService = scraperService;
+            _context = context;
         }
 
         [HttpGet]
@@ -67,6 +70,29 @@ namespace CapstoneII_InfoScraps.Controllers.Scraper
                     {
                         // Set success message if scraping found results
                         model.SuccessMessage = $"Scraping completed for {model.WebsiteUrl}.";
+                        
+                        var scraped = new ScrapedData();
+                        var accountID = HttpContext.Session.GetInt32("AccountID");
+                        if (accountID == null)
+                        {
+                            return View();
+                        }
+                        scraped.AccountId = (int)accountID;
+                        scraped.Website = model.WebsiteUrl;
+                        scraped.Date_Of_Scrape = DateTime.UtcNow;
+                        scraped.Scraped_Email = model.Emails.FirstOrDefault();
+                        scraped.Scraped_Phone = model.PhoneNumbers.FirstOrDefault();
+                        if (model.Names.Count != 0)
+                        {
+                            scraped.Scraped_Name = model.Names.FirstOrDefault();
+                        }
+                        else
+                        {
+                            scraped.Scraped_Name = "No name found";
+                        }
+
+                        _context.ScrapedData.Add(scraped);
+                        _context.SaveChanges();
                     }
                 }
                 else
