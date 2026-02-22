@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Text.RegularExpressions;
 using OpenQA.Selenium;
 using OpenQA.Selenium.Chrome;
+using OpenQA.Selenium.Firefox;
+using OpenQA.Selenium.Support.UI;
 
 namespace CapstoneII_InfoScraps.Services
 {
@@ -19,19 +21,43 @@ namespace CapstoneII_InfoScraps.Services
 
             try
             {
-                // Set up Chrome to run in headless mode
-                var options = new ChromeOptions();
-                options.AddArgument("--headless");
-                options.AddArgument("--disable-gpu");
-                options.AddArgument("--no-sandbox");
+                // Try Chrome/Edge first
+                try
+                {
+                    var options = new ChromeOptions();
+                    options.AddArgument("--headless");
+                    options.AddArgument("--disable-gpu");
+                    options.AddArgument("--no-sandbox");
 
-                driver = new ChromeDriver(options);
+                    driver = new ChromeDriver(options);
+                }
+                catch
+                {
+                    // If Chrome/Edge fails, use Firefox
+                    var firefoxOptions = new FirefoxOptions();
+                    firefoxOptions.AddArgument("--headless");
+
+                    driver = new FirefoxDriver(firefoxOptions);
+                }
 
                 // Navigate to the requested URL
                 driver.Navigate().GoToUrl(url);
 
                 // Wait up to 1 second for page to load
-                driver.Manage().Timeouts().PageLoad = TimeSpan.FromSeconds(1);
+                var wait = new WebDriverWait(driver, TimeSpan.FromSeconds(1));
+
+                try
+                {
+                    wait.Until(d =>
+                        ((IJavaScriptExecutor)d)
+                        .ExecuteScript("return document.readyState")
+                        .Equals("complete")
+                    );
+                }
+                catch
+                {
+                    // Continue even if timeout occurs
+                }
 
                 // Get the full page source
                 var pageSource = driver.PageSource;
