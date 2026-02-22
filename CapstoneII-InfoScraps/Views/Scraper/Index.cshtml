@@ -1,17 +1,60 @@
 ﻿@model CapstoneII_InfoScraps.Models.ViewModels.ScraperViewModel
 
 @{
-    ViewData["Title"] = "Scraper";
+    ViewData["Title"] = "Website Scraper";
 }
 
-<h1>Scraper Page</h1>
+<h2>Website Scraper</h2>
 
 <form asp-action="Index" method="post">
+
     <div>
         <label asp-for="WebsiteUrl"></label>
         <input asp-for="WebsiteUrl" />
-        <span asp-validation-for="WebsiteUrl"></span>
+        <span asp-validation-for="WebsiteUrl" style="color:red;"></span>
     </div>
 
-    <button type="submit">Start Scrape</button>
+    <br />
+
+    <button type="submit">Scrape Website</button>
+
 </form>
+
+<hr />
+
+<!-- Show success, error, or results -->
+@if (!string.IsNullOrEmpty(Model.SuccessMessage))
+{
+    <p style="color:green;"><strong>@Model.SuccessMessage</strong></p>
+}
+
+@if (!string.IsNullOrEmpty(Model.ErrorMessage))
+{
+    <p style="color:red;"><strong>@Model.ErrorMessage</strong></p>
+}
+
+@if (Model.Emails.Any() || Model.PhoneNumbers.Any() || Model.Names.Any())
+{
+    <h3>Scraping Results</h3>
+
+    <div style="margin-bottom:15px;">
+        @if (Model.Names.Any())
+        {
+            <p><strong>Names:</strong> @string.Join(", ", Model.Names)</p>
+        }
+
+        @if (Model.Emails.Any())
+        {
+            <p><strong>Emails:</strong> @string.Join(", ", Model.Emails)</p>
+        }
+
+        @if (Model.PhoneNumbers.Any())
+        {
+            <p><strong>Phones:</strong> @string.Join(", ", Model.PhoneNumbers)</p>
+        }
+    </div>
+}
+else
+{
+    <p>No results found yet. Try submitting a website above.</p>
+}

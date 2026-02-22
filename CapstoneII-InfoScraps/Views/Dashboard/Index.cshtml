@@ -1,5 +1,57 @@
-﻿@{
+﻿@model List<CapstoneII_InfoScraps.Models.DB.Account>
+@{
     ViewData["Title"] = "Dashboard";
 }
 
 <h1>Dashboard Page</h1>
+@if(Model != null && Model.Any()){
+    @foreach (var account in Model)
+    {
+        var user = account.User;
+        <h2>Account ID: @account.Id</h2>
+        <p>Username: @user.Username</p>
+        <p>Email: @user.Email</p>
+        @if(user.Phone_Number == null)
+        {
+            <p>Phone: None provided</p>
+        }
+        else
+        {
+            <p>Phone: @user.Phone_Number</p>
+        }
+        <p>Number of email templates: @account.Email_Templates.Count</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Date of Scrape</th>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Website</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var scrape in account.Scraped_Data)
+            {
+            <tr>
+                <td>@scrape.Date_Of_Scrape</td>
+                <td>@scrape.Scraped_Email</td>
+                <td>@scrape.Scraped_Name</td>
+                <td>@scrape.Scraped_Phone</td>
+                <td><a href="@scrape.Website">@scrape.Website</a></td>
+            </tr>
+            }
+            </tbody>
+        </table>
+    }    
+    <a class="nav-link text-dark btn btn-primary" style="margin: auto auto;width: 20%" asp-controller="Scraper" asp-action="Index">Scrape</a>
+    <br>
+    <a class="nav-link text-dark btn btn-primary" style="margin: auto auto;width: 20%" asp-controller="EmailTemplates" asp-action="Index">Email templates</a>
+    <br>
+    <a class="nav-link text-dark btn btn-danger" style="margin: auto auto;width: 20%" asp-controller="Dashboard" asp-action="Logout">Log out</a>
+}
+else
+{
+    <h2>You are not logged in</h2>
+    <a class="nav-link text-dark btn btn-primary" style="margin: auto auto;width: 20%" asp-controller="Login" asp-action="Index">Log in</a>
+}
