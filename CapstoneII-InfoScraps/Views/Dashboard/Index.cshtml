@@ -20,7 +20,29 @@
             <p>Phone: @user.Phone_Number</p>
         }
         <p>Number of email templates: @account.Email_Templates.Count</p>
-        <p>Number of scrapes: @account.Scraped_Data.Count</p>
+        <table class="table">
+            <thead>
+            <tr>
+                <th>Date of Scrape</th>
+                <th>Email</th>
+                <th>Name</th>
+                <th>Phone</th>
+                <th>Website</th>
+            </tr>
+            </thead>
+            <tbody>
+            @foreach (var scrape in account.Scraped_Data)
+            {
+            <tr>
+                <td>@scrape.Date_Of_Scrape</td>
+                <td>@scrape.Scraped_Email</td>
+                <td>@scrape.Scraped_Name</td>
+                <td>@scrape.Scraped_Phone</td>
+                <td><a href="@scrape.Website">@scrape.Website</a></td>
+            </tr>
+            }
+            </tbody>
+        </table>
     }    
     <a class="nav-link text-dark btn btn-primary" style="margin: auto auto;width: 20%" asp-controller="Scraper" asp-action="Index">Scrape</a>
     <br>
