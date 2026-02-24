@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 namespace CapstoneII_InfoScraps.Controllers.Dashboard
 {
@@ -10,7 +11,7 @@ namespace CapstoneII_InfoScraps.Controllers.Dashboard
         {
             _context = context;
         }
-    
+
         [HttpGet]
         public IActionResult Index()
         {
@@ -35,10 +36,51 @@ namespace CapstoneII_InfoScraps.Controllers.Dashboard
         }
 
         [HttpGet]
+        public IActionResult ExportCsv()
+        {
+            var accountId = HttpContext.Session.GetInt32("AccountID");
+            if (accountId == null)
+            {
+                return RedirectToAction("Index", "Home");
+            }
+
+            var scrapedData = _context.ScrapedData
+                .Where(s => s.AccountId == accountId.Value)
+                .OrderByDescending(s => s.Date_Of_Scrape)
+                .ToList();
+
+            var csv = new StringBuilder();
+            csv.AppendLine("Date,Email,Name,Phone,Website");
+
+            foreach (var record in scrapedData)
+            {
+                var date = EscapeCsvField(record.Date_Of_Scrape.ToString("yyyy-MM-dd HH:mm:ss"));
+                var email = EscapeCsvField(record.Scraped_Email ?? "");
+                var name = EscapeCsvField(record.Scraped_Name ?? "");
+                var phone = EscapeCsvField(record.Scraped_Phone ?? "");
+                var website = EscapeCsvField(record.Website);
+                csv.AppendLine($"{date},{email},{name},{phone},{website}");
+            }
+
+            var bytes = Encoding.UTF8.GetBytes(csv.ToString());
+            var fileName = $"infoscraps_leads_{DateTime.UtcNow:yyyyMMdd_HHmmss}.csv";
+            return File(bytes, "text/csv", fileName);
+        }
+
+        private static string EscapeCsvField(string field)
+        {
+            if (field.Contains(',') || field.Contains('"') || field.Contains('\n'))
+            {
+                return "\"" + field.Replace("\"", "\"\"") + "\"";
+            }
+            return field;
+        }
+
+        [HttpGet]
         public IActionResult Logout()
         {
             HttpContext.Session.Clear();
             return RedirectToAction("Index", "Home");
         }
-}
+    }
 }

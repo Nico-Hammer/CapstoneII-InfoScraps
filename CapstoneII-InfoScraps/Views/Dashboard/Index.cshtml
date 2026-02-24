@@ -1,57 +1,107 @@
-﻿@model List<CapstoneII_InfoScraps.Models.DB.Account>
+@model List<CapstoneII_InfoScraps.Models.DB.Account>
 @{
     ViewData["Title"] = "Dashboard";
 }
 
-<h1>Dashboard Page</h1>
-@if(Model != null && Model.Any()){
+@if (Model != null && Model.Any())
+{
     @foreach (var account in Model)
     {
         var user = account.User;
-        <h2>Account ID: @account.Id</h2>
-        <p>Username: @user.Username</p>
-        <p>Email: @user.Email</p>
-        @if(user.Phone_Number == null)
-        {
-            <p>Phone: None provided</p>
-        }
-        else
-        {
-            <p>Phone: @user.Phone_Number</p>
-        }
-        <p>Number of email templates: @account.Email_Templates.Count</p>
-        <table class="table">
-            <thead>
-            <tr>
-                <th>Date of Scrape</th>
-                <th>Email</th>
-                <th>Name</th>
-                <th>Phone</th>
-                <th>Website</th>
-            </tr>
-            </thead>
-            <tbody>
-            @foreach (var scrape in account.Scraped_Data)
+        var scrapeCount = account.Scraped_Data.Count;
+        var uniqueDomains = account.Scraped_Data.Select(s => new Uri(s.Website).Host).Distinct().Count();
+
+        <div class="is-page-header">
+            <h1>Dashboard</h1>
+            <div class="is-page-actions">
+                <a class="is-btn is-btn-primary" asp-controller="Scraper" asp-action="Index">Scrape</a>
+                <a class="is-btn is-btn-export" asp-controller="Dashboard" asp-action="ExportCsv">Export All CSV</a>
+            </div>
+        </div>
+
+        <!-- Stats Grid -->
+        <div class="is-stats-grid">
+            <div class="is-stat-card">
+                <div class="is-stat-value">@scrapeCount</div>
+                <div class="is-stat-label">Total Leads</div>
+            </div>
+            <div class="is-stat-card">
+                <div class="is-stat-value">@uniqueDomains</div>
+                <div class="is-stat-label">Domains Scraped</div>
+            </div>
+            <div class="is-stat-card">
+                <div class="is-stat-value">@account.Email_Templates.Count</div>
+                <div class="is-stat-label">Email Templates</div>
+            </div>
+        </div>
+
+        <!-- Scraped Data Table -->
+        <div class="is-card is-card-static">
+            <div class="is-page-header" style="margin-bottom: var(--space-md);">
+                <h3>Scraped Leads</h3>
+                <div class="is-search-bar" style="margin-bottom: 0; flex: 1; max-width: 400px;">
+                    <span class="is-search-icon">&#128269;</span>
+                    <input type="text" class="is-search-input" id="searchInput" placeholder="Search leads..." />
+                </div>
+            </div>
+
+            @if (account.Scraped_Data.Any())
             {
-            <tr>
-                <td>@scrape.Date_Of_Scrape</td>
-                <td>@scrape.Scraped_Email</td>
-                <td>@scrape.Scraped_Name</td>
-                <td>@scrape.Scraped_Phone</td>
-                <td><a href="@scrape.Website">@scrape.Website</a></td>
-            </tr>
+                <table class="is-table" id="leadsTable">
+                    <thead>
+                        <tr>
+                            <th>Date</th>
+                            <th>Email</th>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th>Website</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach (var scrape in account.Scraped_Data.OrderByDescending(s => s.Date_Of_Scrape))
+                        {
+                            <tr>
+                                <td class="is-date">@scrape.Date_Of_Scrape.ToString("yyyy-MM-dd HH:mm")</td>
+                                <td class="is-email">@scrape.Scraped_Email</td>
+                                <td>@scrape.Scraped_Name</td>
+                                <td>@scrape.Scraped_Phone</td>
+                                <td class="is-website"><a href="@scrape.Website" target="_blank">@scrape.Website</a></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
             }
-            </tbody>
-        </table>
-    }    
-    <a class="nav-link text-dark btn btn-primary" style="margin: auto auto;width: 20%" asp-controller="Scraper" asp-action="Index">Scrape</a>
-    <br>
-    <a class="nav-link text-dark btn btn-primary" style="margin: auto auto;width: 20%" asp-controller="EmailTemplates" asp-action="Index">Email templates</a>
-    <br>
-    <a class="nav-link text-dark btn btn-danger" style="margin: auto auto;width: 20%" asp-controller="Dashboard" asp-action="Logout">Log out</a>
+            else
+            {
+                <div class="is-no-data">
+                    No leads scraped yet. Click "Scrape" to get started.
+                </div>
+            }
+        </div>
+    }
 }
 else
 {
-    <h2>You are not logged in</h2>
-    <a class="nav-link text-dark btn btn-primary" style="margin: auto auto;width: 20%" asp-controller="Login" asp-action="Index">Log in</a>
+    <div class="is-auth-container">
+        <h1>Not Logged In</h1>
+        <p style="color: var(--gray-400);">Please log in to access your dashboard.</p>
+        <a class="is-btn is-btn-primary" asp-controller="Login" asp-action="Index">Log In</a>
+    </div>
+}
+
+@section Scripts {
+    <script>
+        // Search functionality for leads table
+        var searchInput = document.getElementById('searchInput');
+        if (searchInput) {
+            searchInput.addEventListener('input', function () {
+                var filter = this.value.toLowerCase();
+                var rows = document.querySelectorAll('#leadsTable tbody tr');
+                rows.forEach(function (row) {
+                    var text = row.textContent.toLowerCase();
+                    row.style.display = text.includes(filter) ? '' : 'none';
+                });
+            });
+        }
+    </script>
 }

@@ -1,35 +1,40 @@
-﻿@model CapstoneII_InfoScraps.Models.DB.User
+@model CapstoneII_InfoScraps.Models.DB.User
 @{
     ViewData["Title"] = "Registration";
 }
 
-<h1>Registration</h1>
-<form asp-controller="Registration" asp-action="Register" method="post">
-    <fieldset>
-        <legend>Create an account</legend>
-        <div>
-            <label for="Username">Username: </label>
-            <input type="text" asp-for="Username" class="form-control"/>
-            <span asp-validation-for="Username" class="text-danger"></span>
-        </div>
-        <div>
-            <label for="Email">Email: </label>
-            <input type="email" asp-for="Email" class="form-control"/>
-            <span asp-validation-for="Email" class="text-danger"></span>
-        </div>
-        <div>
-            <label for="Phone_Number">Phone Number: </label>
-            <input type="text" asp-for="Phone_Number" class="form-control"/>
-            <span asp-validation-for="Phone_Number" class="text-danger"></span>
-        </div>
-        <div>
-            <label for="Password">Password: </label>
-            <input type="password" asp-for="Password" class="form-control"/>
-            <span asp-validation-for="Password" class="text-danger"></span>
-        </div>
-    </fieldset>
-    <button type="submit" class="btn btn-primary">Register Account</button>
-</form>
+<div class="is-auth-container">
+    <div class="is-auth-card">
+        <h1>Register</h1>
+        <form asp-controller="Registration" asp-action="Register" method="post">
+            <fieldset>
+                <legend>Create an account</legend>
+                <div class="is-form-group">
+                    <label class="is-form-label" for="Username">Username</label>
+                    <input type="text" asp-for="Username" class="is-form-input" placeholder="Choose a username" />
+                    <span asp-validation-for="Username" class="text-danger"></span>
+                </div>
+                <div class="is-form-group">
+                    <label class="is-form-label" for="Email">Email</label>
+                    <input type="email" asp-for="Email" class="is-form-input" placeholder="Enter your email" />
+                    <span asp-validation-for="Email" class="text-danger"></span>
+                </div>
+                <div class="is-form-group">
+                    <label class="is-form-label" for="Phone_Number">Phone Number</label>
+                    <input type="text" asp-for="Phone_Number" class="is-form-input" placeholder="Optional" />
+                    <span asp-validation-for="Phone_Number" class="text-danger"></span>
+                </div>
+                <div class="is-form-group">
+                    <label class="is-form-label" for="Password">Password</label>
+                    <input type="password" asp-for="Password" class="is-form-input" placeholder="Create a password" />
+                    <span asp-validation-for="Password" class="text-danger"></span>
+                </div>
+            </fieldset>
+            <button type="submit" class="is-btn is-btn-primary" style="width: 100%; margin-top: var(--space-md);">Register Account</button>
+        </form>
+    </div>
+</div>
+
 @section Scripts {
     <partial name="_ValidationScriptsPartial" />
 }

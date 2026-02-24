@@ -1,60 +1,80 @@
-﻿@model CapstoneII_InfoScraps.Models.ViewModels.ScraperViewModel
-
+@model CapstoneII_InfoScraps.Models.ViewModels.ScraperViewModel
 @{
     ViewData["Title"] = "Website Scraper";
 }
 
-<h2>Website Scraper</h2>
+<div class="is-page-header">
+    <h1>Website Scraper</h1>
+    <a class="is-btn is-btn-secondary" asp-controller="Dashboard" asp-action="Index">Back to Dashboard</a>
+</div>
 
-<form asp-action="Index" method="post">
+<div class="is-card is-card-static">
+    <form asp-action="Index" method="post">
+        <div class="is-form-group">
+            <label class="is-form-label" asp-for="WebsiteUrl">Website URL</label>
+            <div class="is-input-group">
+                <input asp-for="WebsiteUrl" class="is-form-input" placeholder="https://example.com" />
+                <button type="submit" class="is-btn is-btn-primary">Scrape Website</button>
+            </div>
+            <span asp-validation-for="WebsiteUrl" class="text-danger"></span>
+        </div>
+    </form>
+</div>
 
-    <div>
-        <label asp-for="WebsiteUrl"></label>
-        <input asp-for="WebsiteUrl" />
-        <span asp-validation-for="WebsiteUrl" style="color:red;"></span>
-    </div>
-
-    <br />
-
-    <button type="submit">Scrape Website</button>
-
-</form>
-
-<hr />
-
-<!-- Show success, error, or results -->
 @if (!string.IsNullOrEmpty(Model.SuccessMessage))
 {
-    <p style="color:green;"><strong>@Model.SuccessMessage</strong></p>
+    <div class="is-alert is-alert-success is-mt-lg">@Model.SuccessMessage</div>
 }
 
 @if (!string.IsNullOrEmpty(Model.ErrorMessage))
 {
-    <p style="color:red;"><strong>@Model.ErrorMessage</strong></p>
+    <div class="is-alert is-alert-error is-mt-lg">@Model.ErrorMessage</div>
 }
 
 @if (Model.Emails.Any() || Model.PhoneNumbers.Any() || Model.Names.Any())
 {
-    <h3>Scraping Results</h3>
-
-    <div style="margin-bottom:15px;">
-        @if (Model.Names.Any())
-        {
-            <p><strong>Names:</strong> @string.Join(", ", Model.Names)</p>
-        }
-
-        @if (Model.Emails.Any())
-        {
-            <p><strong>Emails:</strong> @string.Join(", ", Model.Emails)</p>
-        }
-
-        @if (Model.PhoneNumbers.Any())
-        {
-            <p><strong>Phones:</strong> @string.Join(", ", Model.PhoneNumbers)</p>
-        }
+    <div class="is-results-section">
+        <h3>Scraping Results</h3>
+        <div class="is-contacts-grid is-mt-lg">
+            @{
+                var maxCount = Math.Max(Model.Emails.Count, Math.Max(Model.Names.Count, Model.PhoneNumbers.Count));
+            }
+            @for (int i = 0; i < maxCount; i++)
+            {
+                <div class="is-contact-card">
+                    @if (i < Model.Names.Count)
+                    {
+                        <div class="is-contact-name">@Model.Names[i]</div>
+                    }
+                    @if (i < Model.Emails.Count)
+                    {
+                        <div class="is-contact-email">@Model.Emails[i]</div>
+                    }
+                    @if (i < Model.PhoneNumbers.Count)
+                    {
+                        <div class="is-contact-phone">@Model.PhoneNumbers[i]</div>
+                    }
+                </div>
+            }
+        </div>
     </div>
 }
 else
 {
-    <p>No results found yet. Try submitting a website above.</p>
+    <div class="is-no-data is-mt-xl">
+        No results found yet. Enter a website URL above to begin scraping.
+    </div>
+}
+
+<div class="is-loading-overlay" id="loadingOverlay">
+    <div class="is-spinner"></div>
+    <div class="is-loading-text">Scraping website...</div>
+</div>
+
+@section Scripts {
+    <script>
+        document.querySelector('form').addEventListener('submit', function () {
+            document.getElementById('loadingOverlay').classList.add('active');
+        });
+    </script>
 }
