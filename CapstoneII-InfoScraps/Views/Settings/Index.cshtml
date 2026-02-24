@@ -1,5 +1,57 @@
-﻿@{
-    ViewData["Title"] = "Settings";
+@model CapstoneII_InfoScraps.Models.DB.Account
+@{
+    ViewData["Title"] = "Account";
 }
 
-<h1>Settings Page</h1>
+<div class="is-page-header">
+    <h1>Account</h1>
+    <div class="is-page-actions">
+        <a class="is-btn is-btn-secondary" asp-controller="Dashboard" asp-action="Index">Back to Dashboard</a>
+        <a class="is-btn is-btn-danger" asp-controller="Dashboard" asp-action="Logout">Log Out</a>
+    </div>
+</div>
+
+@if (Model != null)
+{
+    var user = Model.User;
+
+    <div class="is-card is-card-static is-mb-xl">
+        <h3>Account Information</h3>
+        <div class="is-user-info">
+            <div class="is-user-info-item">
+                <span class="is-user-info-label">Account ID</span>
+                <span class="is-user-info-value">@Model.Id</span>
+            </div>
+            <div class="is-user-info-item">
+                <span class="is-user-info-label">Username</span>
+                <span class="is-user-info-value">@user.Username</span>
+            </div>
+            <div class="is-user-info-item">
+                <span class="is-user-info-label">Email</span>
+                <span class="is-user-info-value">@user.Email</span>
+            </div>
+            <div class="is-user-info-item">
+                <span class="is-user-info-label">Phone</span>
+                <span class="is-user-info-value">@(user.Phone_Number ?? "None provided")</span>
+            </div>
+        </div>
+    </div>
+
+    <div class="is-stats-grid">
+        <div class="is-stat-card">
+            <div class="is-stat-value">@Model.Scraped_Data.Count</div>
+            <div class="is-stat-label">Total Leads</div>
+        </div>
+        <div class="is-stat-card">
+            <div class="is-stat-value">@Model.Email_Templates.Count</div>
+            <div class="is-stat-label">Email Templates</div>
+        </div>
+    </div>
+}
+else
+{
+    <div class="is-auth-container">
+        <p style="color: var(--gray-400);">Unable to load account information.</p>
+        <a class="is-btn is-btn-primary" asp-controller="Login" asp-action="Index">Log In</a>
+    </div>
+}

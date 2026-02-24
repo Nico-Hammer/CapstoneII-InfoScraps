@@ -1,9 +1,14 @@
-﻿@{
-    ViewData["Title"] = "Home Page";
+@{
+    ViewData["Title"] = "Home";
 }
 
-<div class="text-center">
-    <a class="nav-link text-dark btn btn-primary" style="margin: auto auto;width: 20%" asp-controller="Login" asp-action="Index">Login</a>
-    <br>
-    <a class="nav-link text-dark btn btn-secondary" style="margin: auto auto;width: 20%" asp-controller="Registration" asp-action="Index">Register</a>
+<div class="is-auth-container">
+    <h1>InfoScraps</h1>
+    <p style="color: var(--gray-400); font-size: 1.1rem; max-width: 500px;">
+        Scrape contact information from websites quickly and efficiently.
+    </p>
+    <div class="is-auth-buttons" style="width: 300px;">
+        <a class="is-btn is-btn-primary" asp-controller="Login" asp-action="Index">Login</a>
+        <a class="is-btn is-btn-secondary" asp-controller="Registration" asp-action="Index">Register</a>
+    </div>
 </div>
