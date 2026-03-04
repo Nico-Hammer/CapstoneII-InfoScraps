@@ -1,14 +1,202 @@
+@model CapstoneII_InfoScraps.Models.ViewModels.EmailTemplatesViewModel
 @{
     ViewData["Title"] = "Email Templates";
 }
 
+@if (TempData["Success"] != null)
+{
+    <div class="is-alert is-alert-success">@TempData["Success"]</div>
+}
+
 <div class="is-page-header">
     <h1>Email Templates</h1>
-    <a class="is-btn is-btn-secondary" asp-controller="Dashboard" asp-action="Index">Back to Dashboard</a>
-</div>
-
-<div class="is-card is-card-static">
-    <div class="is-no-data">
-        Email templates coming soon.
+    <div class="is-page-actions">
+        <button class="is-btn is-btn-primary" onclick="openCreateModal()">Create Template</button>
+        <a class="is-btn is-btn-secondary" asp-controller="Dashboard" asp-action="Index">Back to Dashboard</a>
     </div>
 </div>
+
+<!-- My Templates -->
+@if (Model.UserTemplates.Any())
+{
+    <h2 class="is-mb-lg">My Templates</h2>
+    <div class="is-template-grid">
+        @foreach (var template in Model.UserTemplates)
+        {
+            <div class="is-template-card">
+                <div class="is-template-header">
+                    <span class="is-template-badge is-badge-custom">Custom</span>
+                </div>
+                <h3 class="is-template-name">@template.Name</h3>
+                <p class="is-template-subject"><strong>Subject:</strong> @template.Subject</p>
+                <p class="is-template-body-preview">@(template.Body.Length > 120 ? template.Body.Substring(0, 120) + "..." : template.Body)</p>
+                @if (template.Variables.Any())
+                {
+                    <div class="is-template-vars">
+                        @foreach (var v in template.Variables)
+                        {
+                            <span class="is-var-tag">@v</span>
+                        }
+                    </div>
+                }
+                <div class="is-template-actions">
+                    <button class="is-btn is-btn-primary is-btn-sm" onclick='useTemplate(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(new { template.Name, template.Subject, template.Body, template.Variables })))'>Use Template</button>
+                    <button class="is-btn is-btn-secondary is-btn-sm" onclick='editTemplate(@template.Id, @Html.Raw(System.Text.Json.JsonSerializer.Serialize(new { template.Name, template.Subject, template.Body })))'>Edit</button>
+                    <button class="is-btn is-btn-danger is-btn-sm" onclick="confirmDelete(@template.Id, '@Html.Raw(template.Name.Replace("'", "\\'"))')">Delete</button>
+                </div>
+            </div>
+        }
+    </div>
+}
+
+<!-- Default Templates -->
+<h2 class="is-mt-xl is-mb-lg">Default Templates</h2>
+<div class="is-template-grid">
+    @foreach (var template in Model.DefaultTemplates)
+    {
+        <div class="is-template-card">
+            <div class="is-template-header">
+                <span class="is-template-badge is-badge-default">Default</span>
+            </div>
+            <h3 class="is-template-name">@template.Name</h3>
+            <p class="is-template-subject"><strong>Subject:</strong> @template.Subject</p>
+            <p class="is-template-body-preview">@(template.Body.Length > 120 ? template.Body.Substring(0, 120) + "..." : template.Body)</p>
+            @if (template.Variables.Any())
+            {
+                <div class="is-template-vars">
+                    @foreach (var v in template.Variables)
+                    {
+                        <span class="is-var-tag">@v</span>
+                    }
+                </div>
+            }
+            <div class="is-template-actions">
+                <button class="is-btn is-btn-primary is-btn-sm" onclick='useTemplate(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(new { template.Name, template.Subject, template.Body, template.Variables })))'>Use Template</button>
+                <button class="is-btn is-btn-secondary is-btn-sm" onclick='cloneTemplate(@Html.Raw(System.Text.Json.JsonSerializer.Serialize(new { template.Name, template.Subject, template.Body })))'>Edit</button>
+            </div>
+        </div>
+    }
+</div>
+
+<!-- Create/Edit Modal -->
+<div class="modal fade" id="templateModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-lg">
+        <div class="modal-content is-modal-content">
+            <form id="templateForm" method="post">
+                <div class="modal-header is-modal-header">
+                    <h5 class="modal-title" id="templateModalTitle">Create Template</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body is-modal-body">
+                    <input type="hidden" name="id" id="templateId" />
+                    <div class="is-form-group">
+                        <label class="is-form-label" for="templateName">Template Name</label>
+                        <input type="text" class="is-form-input" id="templateName" name="name" required placeholder="e.g. Follow-Up Email" />
+                    </div>
+                    <div class="is-form-group">
+                        <label class="is-form-label" for="templateSubject">Subject Line</label>
+                        <input type="text" class="is-form-input" id="templateSubject" name="subject" required placeholder="e.g. Quick question, {{business_name}}" />
+                    </div>
+                    <div class="is-form-group">
+                        <label class="is-form-label" for="templateBody">Email Body</label>
+                        <textarea class="is-form-input is-textarea" id="templateBody" name="body" rows="10" required placeholder="Use {{variable_name}} for dynamic content..."></textarea>
+                    </div>
+                    <p class="is-hint">Use <code>{{variable_name}}</code> syntax for dynamic variables (e.g. <code>{{first_name}}</code>, <code>{{business_name}}</code>).</p>
+                </div>
+                <div class="modal-footer is-modal-footer">
+                    <button type="button" class="is-btn is-btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="is-btn is-btn-primary">Save Template</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Confirmation Modal -->
+<div class="modal fade" id="deleteModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content is-modal-content">
+            <form method="post" asp-action="Delete">
+                <div class="modal-header is-modal-header">
+                    <h5 class="modal-title">Delete Template</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body is-modal-body">
+                    <p>Are you sure you want to delete <strong id="deleteTemplateName"></strong>?</p>
+                    <p class="is-hint">This action cannot be undone.</p>
+                    <input type="hidden" name="id" id="deleteTemplateId" />
+                </div>
+                <div class="modal-footer is-modal-footer">
+                    <button type="button" class="is-btn is-btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                    <button type="submit" class="is-btn is-btn-danger">Delete</button>
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Use Template / Generate Email Modal -->
+<div class="modal fade" id="useModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl">
+        <div class="modal-content is-modal-content">
+            <div class="modal-header is-modal-header">
+                <h5 class="modal-title">Generate Email: <span id="useTemplateName"></span></h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body is-modal-body">
+                <div class="is-step">
+                    <h3 class="is-step-title">1. Select a Lead</h3>
+                    <div class="is-form-group">
+                        <label class="is-form-label" for="leadSelect">Choose a scraped lead to auto-fill variables</label>
+                        <select class="is-form-input" id="leadSelect">
+                            <option value="">-- No lead selected (use fallback values) --</option>
+                        </select>
+                    </div>
+                </div>
+                <div class="is-step">
+                    <h3 class="is-step-title">2. Review & Edit Variables</h3>
+                    <p class="is-hint">Values are auto-filled from the selected lead. Edit any field before generating.</p>
+                    <div id="variableFields" class="is-var-grid"></div>
+                </div>
+                <div class="is-step">
+                    <h3 class="is-step-title">3. Email Preview</h3>
+                    <div class="is-email-preview">
+                        <div class="is-email-preview-row">
+                            <span class="is-email-preview-label">To:</span>
+                            <span id="previewTo" class="is-email-preview-value">&mdash;</span>
+                        </div>
+                        <div class="is-email-preview-row">
+                            <span class="is-email-preview-label">Subject:</span>
+                            <span id="previewSubject" class="is-email-preview-value"></span>
+                        </div>
+                        <div class="is-email-preview-body">
+                            <pre id="previewBody"></pre>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer is-modal-footer">
+                <button type="button" class="is-btn is-btn-secondary" data-bs-dismiss="modal">Cancel</button>
+                <button type="button" class="is-btn is-btn-primary" onclick="generateEmail()">Open in Email Client</button>
+            </div>
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+    <script src="~/js/email-templates.js" asp-append-version="true"></script>
+    <script>
+        initEmailTemplates(
+            @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Leads.Select(l => new {
+                l.Id,
+                name = l.Scraped_Name ?? "",
+                email = l.Scraped_Email ?? "",
+                phone = l.Scraped_Phone ?? "",
+                website = l.Website
+            }))),
+            @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.SenderName)),
+            '@Url.Action("Create")',
+            '@Url.Action("Edit")'
+        );
+    </script>
+}

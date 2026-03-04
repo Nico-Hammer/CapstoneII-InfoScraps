@@ -1017,3 +1017,287 @@ a:hover {
 .is-fade-in {
     animation: fadeIn 0.6s ease;
 }
+
+/* ============================================================================
+   Email Templates
+   ============================================================================ */
+.is-template-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(340px, 1fr));
+    gap: var(--space-lg);
+    margin-bottom: var(--space-2xl);
+}
+
+.is-template-card {
+    background: rgba(30, 41, 59, 0.8);
+    backdrop-filter: blur(10px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-lg);
+    padding: var(--space-lg);
+    display: flex;
+    flex-direction: column;
+    gap: var(--space-sm);
+    transition: all var(--transition-base);
+    animation: fadeInUp 0.6s ease;
+}
+
+.is-template-card:hover {
+    border-color: rgba(6, 182, 212, 0.3);
+    box-shadow: 0 0 20px rgba(6, 182, 212, 0.1);
+}
+
+.is-template-header {
+    display: flex;
+    justify-content: flex-end;
+}
+
+.is-template-badge {
+    font-size: 0.7rem;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    padding: 0.2rem 0.6rem;
+    border-radius: var(--radius-sm);
+}
+
+.is-badge-default {
+    background: rgba(59, 130, 246, 0.15);
+    color: var(--info);
+    border: 1px solid rgba(59, 130, 246, 0.3);
+}
+
+.is-badge-custom {
+    background: rgba(16, 185, 129, 0.15);
+    color: var(--success);
+    border: 1px solid rgba(16, 185, 129, 0.3);
+}
+
+.is-template-name {
+    font-size: 1.15rem;
+    color: var(--gray-100);
+    margin-bottom: 0;
+}
+
+.is-template-subject {
+    font-size: 0.875rem;
+    color: var(--gray-400);
+    margin-bottom: 0;
+}
+
+.is-template-subject strong {
+    color: var(--gray-300);
+}
+
+.is-template-body-preview {
+    font-size: 0.825rem;
+    color: var(--gray-500);
+    line-height: 1.5;
+    margin-bottom: var(--space-xs);
+    flex-grow: 1;
+}
+
+.is-template-vars {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 0.35rem;
+    margin-bottom: var(--space-sm);
+}
+
+.is-var-tag {
+    font-family: var(--font-mono);
+    font-size: 0.7rem;
+    padding: 0.15rem 0.5rem;
+    background: rgba(6, 182, 212, 0.1);
+    border: 1px solid rgba(6, 182, 212, 0.25);
+    border-radius: var(--radius-sm);
+    color: var(--accent-cyan);
+}
+
+.is-template-actions {
+    display: flex;
+    gap: var(--space-sm);
+    flex-wrap: wrap;
+    margin-top: var(--space-sm);
+    padding-top: var(--space-sm);
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* Small Button Variant */
+.is-btn-sm {
+    padding: var(--space-xs) var(--space-md);
+    font-size: 0.85rem;
+}
+
+/* ============================================================================
+   Modal Dark Theme
+   ============================================================================ */
+.is-modal-content {
+    background: var(--secondary-dark) !important;
+    border: 1px solid rgba(255, 255, 255, 0.1) !important;
+    border-radius: var(--radius-lg) !important;
+    color: var(--gray-100);
+}
+
+.is-modal-header {
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: var(--space-lg) var(--space-xl);
+}
+
+.is-modal-header .modal-title {
+    font-family: var(--font-display);
+    font-weight: 700;
+    color: var(--gray-100);
+}
+
+.is-modal-body {
+    padding: var(--space-xl);
+}
+
+.is-modal-footer {
+    border-top: 1px solid rgba(255, 255, 255, 0.1) !important;
+    padding: var(--space-lg) var(--space-xl);
+    display: flex;
+    gap: var(--space-md);
+    justify-content: flex-end;
+}
+
+.is-hint {
+    font-size: 0.825rem;
+    color: var(--gray-500);
+    margin-bottom: 0;
+}
+
+.is-hint code {
+    font-family: var(--font-mono);
+    background: rgba(6, 182, 212, 0.1);
+    color: var(--accent-cyan);
+    padding: 0.1rem 0.4rem;
+    border-radius: var(--radius-sm);
+    font-size: 0.8rem;
+}
+
+/* Textarea */
+.is-textarea {
+    resize: vertical;
+    min-height: 150px;
+    font-family: var(--font-body);
+    line-height: 1.6;
+}
+
+/* ============================================================================
+   Use Template Modal - Steps & Variable Mapping
+   ============================================================================ */
+.is-step {
+    margin-bottom: var(--space-xl);
+    padding-bottom: var(--space-xl);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.is-step:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+    padding-bottom: 0;
+}
+
+.is-step-title {
+    font-size: 1.1rem;
+    color: var(--accent-cyan);
+    margin-bottom: var(--space-md);
+}
+
+.is-var-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+    gap: var(--space-md);
+}
+
+.is-var-item {
+    display: flex;
+    flex-direction: column;
+    gap: 0.3rem;
+}
+
+.is-var-label {
+    font-family: var(--font-mono);
+    font-size: 0.825rem;
+    color: var(--accent-cyan);
+    font-weight: 500;
+}
+
+.is-var-input {
+    padding: var(--space-sm) var(--space-md) !important;
+    font-size: 0.9rem !important;
+}
+
+.is-var-fallback {
+    font-size: 0.725rem;
+    color: var(--gray-600);
+    font-style: italic;
+}
+
+/* ============================================================================
+   Email Preview
+   ============================================================================ */
+.is-email-preview {
+    background: rgba(15, 23, 42, 0.6);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    border-radius: var(--radius-md);
+    overflow: hidden;
+}
+
+.is-email-preview-row {
+    display: flex;
+    align-items: center;
+    gap: var(--space-md);
+    padding: var(--space-sm) var(--space-lg);
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.is-email-preview-label {
+    font-weight: 600;
+    font-size: 0.825rem;
+    color: var(--gray-400);
+    min-width: 60px;
+    text-transform: uppercase;
+    letter-spacing: 0.03em;
+}
+
+.is-email-preview-value {
+    color: var(--gray-200);
+    font-size: 0.925rem;
+}
+
+.is-email-preview-body {
+    padding: var(--space-lg);
+}
+
+.is-email-preview-body pre {
+    font-family: var(--font-body);
+    font-size: 0.9rem;
+    color: var(--gray-300);
+    white-space: pre-wrap;
+    word-wrap: break-word;
+    margin: 0;
+    line-height: 1.6;
+}
+
+/* ============================================================================
+   Email Templates - Responsive
+   ============================================================================ */
+@media (max-width: 768px) {
+    .is-template-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .is-var-grid {
+        grid-template-columns: 1fr;
+    }
+
+    .is-template-actions {
+        flex-direction: column;
+    }
+
+    .is-template-actions .is-btn {
+        width: 100%;
+    }
+}
