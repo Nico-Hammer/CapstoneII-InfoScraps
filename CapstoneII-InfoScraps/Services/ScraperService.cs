@@ -109,23 +109,58 @@ namespace CapstoneII_InfoScraps.Services
                     }
                 }
 
-                // Extract names from emails (optional)
+                // Extract names from page meta, title, H1, fallback to emails
                 var names = new List<string>();
-                foreach (var email in emails)
+                try
                 {
-                    var namePart = email.Split('@')[0];
-                    var parts = namePart.Split(new[] { '.', '_' }, StringSplitOptions.RemoveEmptyEntries);
-
-                    var finalName = "";
-                    foreach (var part in parts)
+                    // Check meta tag for Open Graph site name
+                    foreach (var meta in driver.FindElements(By.XPath("//meta[@property='og:site_name']")))
                     {
-                        if (part.Length > 0)
-                            finalName += char.ToUpper(part[0]) + part.Substring(1) + " ";
+                        var content = meta.GetAttribute("content");
+                        if (!string.IsNullOrWhiteSpace(content))
+                            names.Add(content.Trim());
                     }
 
-                    finalName = finalName.Trim();
-                    if (!string.IsNullOrEmpty(finalName))
-                        names.Add(finalName);
+                    // Check meta tag for author
+                    foreach (var meta in driver.FindElements(By.XPath("//meta[@name='author']")))
+                    {
+                        var content = meta.GetAttribute("content");
+                        if (!string.IsNullOrWhiteSpace(content))
+                            names.Add(content.Trim());
+                    }
+
+                    // Use the page title
+                    var title = driver.Title;
+                    if (!string.IsNullOrWhiteSpace(title))
+                        names.Add(title.Split('|')[0].Split('-')[0].Trim());
+
+                    // Use the first H1 if available
+                    var h1 = driver.FindElements(By.TagName("h1"));
+                    if (h1.Count > 0 && !string.IsNullOrWhiteSpace(h1[0].Text))
+                        names.Add(h1[0].Text.Trim());
+                }
+                catch
+                {
+                    // Ignore small errors in page name extraction
+                }
+
+                // Fallback to email-based names if nothing found
+                if (names.Count == 0)
+                {
+                    foreach (var email in emails)
+                    {
+                        var namePart = email.Split('@')[0];
+                        var parts = namePart.Split(new[] { '.', '_' }, StringSplitOptions.RemoveEmptyEntries);
+                        var finalName = "";
+                        foreach (var part in parts)
+                        {
+                            if (!string.IsNullOrEmpty(part))
+                                finalName += char.ToUpper(part[0]) + part.Substring(1) + " ";
+                        }
+                        finalName = finalName.Trim();
+                        if (!string.IsNullOrEmpty(finalName))
+                            names.Add(finalName);
+                    }
                 }
 
                 // Create a result object with all extracted information
