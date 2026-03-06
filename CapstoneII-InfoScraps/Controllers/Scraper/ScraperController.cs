@@ -2,7 +2,6 @@
 using CapstoneII_InfoScraps.Services;
 using Microsoft.AspNetCore.Mvc;
 using System.Text.RegularExpressions;
-using System.Linq;
 using CapstoneII_InfoScraps.Models.DB;
 
 namespace CapstoneII_InfoScraps.Controllers.Scraper
