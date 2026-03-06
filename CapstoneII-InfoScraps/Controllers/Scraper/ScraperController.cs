@@ -108,5 +108,55 @@ namespace CapstoneII_InfoScraps.Controllers.Scraper
 
             return View(model);
         }
+        
+        [HttpPost]
+        public IActionResult Edit(int id, string name, string email, string phone)
+        {
+            var userID = HttpContext.Session.GetInt32("UserID");
+            if (userID == null)
+                return RedirectToAction("Index", "Login");
+
+            var accountID = HttpContext.Session.GetInt32("AccountID");
+            if (accountID == null)
+                return RedirectToAction("Index", "Login");
+
+            var scrapedData = _context.ScrapedData
+                .FirstOrDefault(sd => sd.Id == id && sd.AccountId == accountID.Value);
+
+            if (scrapedData == null)
+                return RedirectToAction("Index");
+
+            scrapedData.Scraped_Name = name;
+            scrapedData.Scraped_Email = email;
+            scrapedData.Scraped_Phone = phone;
+            _context.SaveChanges();
+
+            TempData["Success"] = "Scraped data updated successfully.";
+            return RedirectToAction("Index");
+        }
+        
+        [HttpPost]
+        public IActionResult Delete(int id)
+        {
+            var userID = HttpContext.Session.GetInt32("UserID");
+            if (userID == null)
+                return RedirectToAction("Index", "Login");
+
+            var accountID = HttpContext.Session.GetInt32("AccountID");
+            if (accountID == null)
+                return RedirectToAction("Index", "Login");
+
+            var scrapedData = _context.ScrapedData
+                .FirstOrDefault(sd => sd.Id == id && sd.AccountId == accountID.Value);
+
+            if (scrapedData != null)
+            {
+                _context.ScrapedData.Remove(scrapedData);
+                _context.SaveChanges();
+                TempData["Success"] = "Scraped data deleted successfully.";
+            }
+
+            return RedirectToAction("Index");
+        }
     }
 }
