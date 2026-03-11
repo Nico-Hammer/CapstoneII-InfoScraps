@@ -10,6 +10,10 @@
 
 <div class="is-page-header">
     <h1>Email Templates</h1>
+    <div class="is-search-bar" style="margin-bottom: 0; flex: 1; max-width: 400px;">
+        <span class="is-search-icon">&#128269;</span>
+        <input type="text" class="is-search-input" id="templateSearchInput" placeholder="Search templates..." />
+    </div>
     <div class="is-page-actions">
         <button class="is-btn is-btn-primary" onclick="openCreateModal()">Create Template</button>
         <a class="is-btn is-btn-secondary" asp-controller="Dashboard" asp-action="Index">Back to Dashboard</a>
@@ -19,11 +23,12 @@
 <!-- My Templates -->
 @if (Model.UserTemplates.Any())
 {
+    <div id="userTemplatesSection">
     <h2 class="is-mb-lg">My Templates</h2>
     <div class="is-template-grid">
         @foreach (var template in Model.UserTemplates)
         {
-            <div class="is-template-card">
+            <div class="is-template-card" data-template-card>
                 <div class="is-template-header">
                     <span class="is-template-badge is-badge-custom">Custom</span>
                 </div>
@@ -47,14 +52,16 @@
             </div>
         }
     </div>
+    </div>
 }
 
 <!-- Default Templates -->
+<div id="defaultTemplatesSection">
 <h2 class="is-mt-xl is-mb-lg">Default Templates</h2>
 <div class="is-template-grid">
     @foreach (var template in Model.DefaultTemplates)
     {
-        <div class="is-template-card">
+        <div class="is-template-card" data-template-card>
             <div class="is-template-header">
                 <span class="is-template-badge is-badge-default">Default</span>
             </div>
@@ -76,6 +83,7 @@
             </div>
         </div>
     }
+</div>
 </div>
 
 <!-- Create/Edit Modal -->
@@ -186,6 +194,31 @@
 @section Scripts {
     <script src="~/js/email-templates.js" asp-append-version="true"></script>
     <script>
+        // Search functionality for template cards
+        var templateSearch = document.getElementById('templateSearchInput');
+        if (templateSearch) {
+            templateSearch.addEventListener('input', function () {
+                var filter = this.value.toLowerCase();
+                var cards = document.querySelectorAll('[data-template-card]');
+                cards.forEach(function (card) {
+                    var text = card.textContent.toLowerCase();
+                    card.style.display = text.includes(filter) ? '' : 'none';
+                });
+
+                // Hide section headers if all cards in that section are hidden
+                var userSection = document.getElementById('userTemplatesSection');
+                if (userSection) {
+                    var visibleUser = userSection.querySelectorAll('[data-template-card]:not([style*="display: none"])');
+                    userSection.style.display = visibleUser.length > 0 ? '' : 'none';
+                }
+                var defaultSection = document.getElementById('defaultTemplatesSection');
+                if (defaultSection) {
+                    var visibleDefault = defaultSection.querySelectorAll('[data-template-card]:not([style*="display: none"])');
+                    defaultSection.style.display = visibleDefault.length > 0 ? '' : 'none';
+                }
+            });
+        }
+
         initEmailTemplates(
             @Html.Raw(System.Text.Json.JsonSerializer.Serialize(Model.Leads.Select(l => new {
                 l.Id,
