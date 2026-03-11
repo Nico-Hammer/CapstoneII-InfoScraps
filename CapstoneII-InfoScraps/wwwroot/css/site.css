@@ -425,6 +425,27 @@ a:hover {
     color: var(--error) !important;
 }
 
+.is-actions {
+    display: flex;
+    gap: var(--space-xs);
+    white-space: nowrap;
+}
+
+.is-input {
+    background: var(--gray-800);
+    border: 1px solid var(--gray-600);
+    color: var(--gray-100);
+    border-radius: var(--radius-sm);
+    padding: var(--space-sm) var(--space-md);
+    transition: border-color var(--transition-fast);
+}
+
+.is-input:focus {
+    border-color: var(--primary);
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(6, 182, 212, 0.2);
+}
+
 .is-btn-export {
     background: rgba(16, 185, 129, 0.15);
     color: var(--success) !important;
