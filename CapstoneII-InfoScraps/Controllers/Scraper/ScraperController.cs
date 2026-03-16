@@ -11,12 +11,12 @@ namespace CapstoneII_InfoScraps.Controllers.Scraper
     {
         private readonly ScraperService _scraperService;
         private readonly AppDbContext _context;
-        
+
         // Regex pattern to validate website URLs
         private const string URLRegexPattern =
             @"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+?$";
 
-        public ScraperController(ScraperService scraperService,AppDbContext context)
+        public ScraperController(ScraperService scraperService, AppDbContext context)
         {
             // Inject the scraper service
             _scraperService = scraperService;
@@ -54,7 +54,7 @@ namespace CapstoneII_InfoScraps.Controllers.Scraper
                 {
                     var result = resultList.First();
 
-                    // Populate emails and phone numbers
+                    // Populate model lists
                     model.Emails = result.Emails ?? new List<string>();
                     model.PhoneNumbers = result.PhoneNumbers ?? new List<string>();
 
@@ -70,25 +70,48 @@ namespace CapstoneII_InfoScraps.Controllers.Scraper
                     {
                         // Set success message if scraping found results
                         model.SuccessMessage = $"Scraping completed for {model.WebsiteUrl}.";
-                        
+
                         var scraped = new ScrapedData();
                         var accountID = HttpContext.Session.GetInt32("AccountID");
                         if (accountID == null)
                         {
-                            return View();
+                            model.ErrorMessage = "User session expired.";
+                            return View(model);
                         }
-                        scraped.AccountId = (int)accountID;
-                        scraped.Website = model.WebsiteUrl;
-                        scraped.Date_Of_Scrape = DateTime.UtcNow;
-                        scraped.Scraped_Email = model.Emails.FirstOrDefault();
-                        scraped.Scraped_Phone = model.PhoneNumbers.FirstOrDefault();
-                        if (model.Names.Count != 0)
+
+                        // Save each email as a separate contact
+                        foreach (var email in model.Emails)
                         {
-                            scraped.Scraped_Name = model.Names.FirstOrDefault();
+                            var scraped = new ScrapedData
+                            {
+                                AccountId = (int)accountID,
+                                Website = model.WebsiteUrl,
+                                Date_Of_Scrape = DateTime.UtcNow,
+                                Scraped_Email = email,
+                                Scraped_Phone = model.PhoneNumbers.FirstOrDefault(),
+                                Scraped_Name = model.Names.FirstOrDefault() ?? "No name found"
+                            };
+
+                            _context.ScrapedData.Add(scraped);
                         }
-                        else
+
+                        // If no emails were found, fall back to saving phone numbers
+                        if (!model.Emails.Any())
                         {
-                            scraped.Scraped_Name = "No name found";
+                            foreach (var phone in model.PhoneNumbers)
+                            {
+                                var scraped = new ScrapedData
+                                {
+                                    AccountId = (int)accountID,
+                                    Website = model.WebsiteUrl,
+                                    Date_Of_Scrape = DateTime.UtcNow,
+                                    Scraped_Email = null,
+                                    Scraped_Phone = phone,
+                                    Scraped_Name = model.Names.FirstOrDefault() ?? "No name found"
+                                };
+
+                                _context.ScrapedData.Add(scraped);
+                            }
                         }
 
                         _context.ScrapedData.Add(scraped);
