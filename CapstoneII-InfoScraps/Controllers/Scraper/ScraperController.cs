@@ -52,53 +52,51 @@ namespace CapstoneII_InfoScraps.Controllers.Scraper
 
                 if (resultList.Any())
                 {
-                    var result = resultList.First();
-
-                    // Populate model lists
-                    model.Emails = result.Emails ?? new List<string>();
-                    model.PhoneNumbers = result.PhoneNumbers ?? new List<string>();
-
-                    // Populate names (optional)
-                    model.Names = result.Names ?? new List<string>();
-
-                    // Set error message if nothing was found
-                    if (!model.Emails.Any() && !model.PhoneNumbers.Any())
+                    var accountID = HttpContext.Session.GetInt32("AccountID");
+                    if (accountID == null)
                     {
-                        model.ErrorMessage = "No emails or phone numbers were found on this website.";
+                        model.ErrorMessage = "User session expired.";
+                        return View(model);
                     }
-                    else
-                    {
-                        // Set success message if scraping found results
-                        model.SuccessMessage = $"Scraping completed for {model.WebsiteUrl}.";
 
-                        var scraped = new ScrapedData();
-                        var accountID = HttpContext.Session.GetInt32("AccountID");
-                        if (accountID == null)
-                        {
-                            model.ErrorMessage = "User session expired.";
-                            return View(model);
-                        }
+                    // Clear previous model data
+                    model.Emails.Clear();
+                    model.PhoneNumbers.Clear();
+                    model.Names.Clear();
+
+                    // Loop through all results from the scraper
+                    foreach (var result in resultList)
+                    {
+                        // Populate model lists (for showing on the page)
+                        if (result.Emails != null)
+                            model.Emails.AddRange(result.Emails);
+                        if (result.PhoneNumbers != null)
+                            model.PhoneNumbers.AddRange(result.PhoneNumbers);
+                        if (result.Names != null)
+                            model.Names.AddRange(result.Names);
 
                         // Save each email as a separate contact
-                        foreach (var email in model.Emails)
+                        if (result.Emails != null && result.Emails.Any())
                         {
-                            var scraped = new ScrapedData
+                            foreach (var email in result.Emails)
                             {
-                                AccountId = (int)accountID,
-                                Website = model.WebsiteUrl,
-                                Date_Of_Scrape = DateTime.UtcNow,
-                                Scraped_Email = email,
-                                Scraped_Phone = model.PhoneNumbers.FirstOrDefault(),
-                                Scraped_Name = model.Names.FirstOrDefault() ?? "No name found"
-                            };
+                                var scraped = new ScrapedData
+                                {
+                                    AccountId = (int)accountID,
+                                    Website = model.WebsiteUrl,
+                                    Date_Of_Scrape = DateTime.UtcNow,
+                                    Scraped_Email = email,
+                                    Scraped_Phone = result.PhoneNumbers?.FirstOrDefault(),
+                                    Scraped_Name = result.Names?.FirstOrDefault() ?? "No name found"
+                                };
 
-                            _context.ScrapedData.Add(scraped);
+                                _context.ScrapedData.Add(scraped);
+                            }
                         }
-
-                        // If no emails were found, fall back to saving phone numbers
-                        if (!model.Emails.Any())
+                        else if (result.PhoneNumbers != null && result.PhoneNumbers.Any())
                         {
-                            foreach (var phone in model.PhoneNumbers)
+                            // Fallback: save phone numbers if no emails were found
+                            foreach (var phone in result.PhoneNumbers)
                             {
                                 var scraped = new ScrapedData
                                 {
@@ -107,15 +105,25 @@ namespace CapstoneII_InfoScraps.Controllers.Scraper
                                     Date_Of_Scrape = DateTime.UtcNow,
                                     Scraped_Email = null,
                                     Scraped_Phone = phone,
-                                    Scraped_Name = model.Names.FirstOrDefault() ?? "No name found"
+                                    Scraped_Name = result.Names?.FirstOrDefault() ?? "No name found"
                                 };
 
                                 _context.ScrapedData.Add(scraped);
                             }
                         }
+                    }
 
-                        _context.ScrapedData.Add(scraped);
-                        _context.SaveChanges();
+                    // Save all scraped contacts to the database
+                    _context.SaveChanges();
+
+                    // Set success message if scraping found results
+                    if (model.Emails.Any() || model.PhoneNumbers.Any())
+                    {
+                        model.SuccessMessage = $"Scraping completed for {model.WebsiteUrl}.";
+                    }
+                    else
+                    {
+                        model.ErrorMessage = "No emails or phone numbers were found on this website.";
                     }
                 }
                 else
