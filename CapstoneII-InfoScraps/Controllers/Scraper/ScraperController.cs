@@ -10,12 +10,12 @@ namespace CapstoneII_InfoScraps.Controllers.Scraper
     {
         private readonly ScraperService _scraperService;
         private readonly AppDbContext _context;
-        
+
         // Regex pattern to validate website URLs
         private const string URLRegexPattern =
             @"^(?:http(s)?:\/\/)?[\w.-]+(?:\.[\w\.-]+)+[\w\-\._~:/?#[\]@!\$&'\(\)\*\+,;=.]+?$";
 
-        public ScraperController(ScraperService scraperService,AppDbContext context)
+        public ScraperController(ScraperService scraperService, AppDbContext context)
         {
             // Inject the scraper service
             _scraperService = scraperService;
@@ -51,47 +51,78 @@ namespace CapstoneII_InfoScraps.Controllers.Scraper
 
                 if (resultList.Any())
                 {
-                    var result = resultList.First();
-
-                    // Populate emails and phone numbers
-                    model.Emails = result.Emails ?? new List<string>();
-                    model.PhoneNumbers = result.PhoneNumbers ?? new List<string>();
-
-                    // Populate names (optional)
-                    model.Names = result.Names ?? new List<string>();
-
-                    // Set error message if nothing was found
-                    if (!model.Emails.Any() && !model.PhoneNumbers.Any())
+                    var accountID = HttpContext.Session.GetInt32("AccountID");
+                    if (accountID == null)
                     {
-                        model.ErrorMessage = "No emails or phone numbers were found on this website.";
+                        model.ErrorMessage = "User session expired.";
+                        return View(model);
+                    }
+
+                    // Clear previous model data
+                    model.Emails.Clear();
+                    model.PhoneNumbers.Clear();
+                    model.Names.Clear();
+
+                    // Loop through all results from the scraper
+                    foreach (var result in resultList)
+                    {
+                        // Populate model lists (for showing on the page)
+                        if (result.Emails != null)
+                            model.Emails.AddRange(result.Emails);
+                        if (result.PhoneNumbers != null)
+                            model.PhoneNumbers.AddRange(result.PhoneNumbers);
+                        if (result.Names != null)
+                            model.Names.AddRange(result.Names);
+
+                        // Save each email as a separate contact
+                        if (result.Emails != null && result.Emails.Any())
+                        {
+                            foreach (var email in result.Emails)
+                            {
+                                var scraped = new ScrapedData
+                                {
+                                    AccountId = (int)accountID,
+                                    Website = model.WebsiteUrl,
+                                    Date_Of_Scrape = DateTime.UtcNow,
+                                    Scraped_Email = email,
+                                    Scraped_Phone = result.PhoneNumbers?.FirstOrDefault(),
+                                    Scraped_Name = result.Names?.FirstOrDefault() ?? "No name found"
+                                };
+
+                                _context.ScrapedData.Add(scraped);
+                            }
+                        }
+                        else if (result.PhoneNumbers != null && result.PhoneNumbers.Any())
+                        {
+                            // Fallback: save phone numbers if no emails were found
+                            foreach (var phone in result.PhoneNumbers)
+                            {
+                                var scraped = new ScrapedData
+                                {
+                                    AccountId = (int)accountID,
+                                    Website = model.WebsiteUrl,
+                                    Date_Of_Scrape = DateTime.UtcNow,
+                                    Scraped_Email = null,
+                                    Scraped_Phone = phone,
+                                    Scraped_Name = result.Names?.FirstOrDefault() ?? "No name found"
+                                };
+
+                                _context.ScrapedData.Add(scraped);
+                            }
+                        }
+                    }
+
+                    // Save all scraped contacts to the database
+                    _context.SaveChanges();
+
+                    // Set success message if scraping found results
+                    if (model.Emails.Any() || model.PhoneNumbers.Any())
+                    {
+                        model.SuccessMessage = $"Scraping completed for {model.WebsiteUrl}.";
                     }
                     else
                     {
-                        // Set success message if scraping found results
-                        model.SuccessMessage = $"Scraping completed for {model.WebsiteUrl}.";
-                        
-                        var scraped = new ScrapedData();
-                        var accountID = HttpContext.Session.GetInt32("AccountID");
-                        if (accountID == null)
-                        {
-                            return View();
-                        }
-                        scraped.AccountId = (int)accountID;
-                        scraped.Website = model.WebsiteUrl;
-                        scraped.Date_Of_Scrape = DateTime.UtcNow;
-                        scraped.Scraped_Email = model.Emails.FirstOrDefault();
-                        scraped.Scraped_Phone = model.PhoneNumbers.FirstOrDefault();
-                        if (model.Names.Count != 0)
-                        {
-                            scraped.Scraped_Name = model.Names.FirstOrDefault();
-                        }
-                        else
-                        {
-                            scraped.Scraped_Name = "No name found";
-                        }
-
-                        _context.ScrapedData.Add(scraped);
-                        _context.SaveChanges();
+                        model.ErrorMessage = "No emails or phone numbers were found on this website.";
                     }
                 }
                 else
